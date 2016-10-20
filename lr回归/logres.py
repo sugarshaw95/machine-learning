@@ -21,19 +21,19 @@ def judge(x,weights):
 def sigmoid(m):
 		return 1.0/(1+np.exp(-m))
 def bgd(feature,target,alpha = 0.001,iterateTimes = 700):  
-	'... batch gradient descent ...'  
+	print("迭代次数为:",iterateTimes)  
 	theta = np.zeros(feature.shape[1])	
 	for it in range(iterateTimes):	#max iteratetimes is 200  
 		for i in range(feature.shape[0]):	#for each sample  
 			error = target[i] - sigmoid(np.sum(feature[i]*theta))  
 			theta += alpha*error*feature[i]/feature.shape[0]	   
 	predict = [sigmoid(np.sum(theta*sample)) for sample in feature]
-	mse = np.sum((predict - target)**2)/feature.shape[0]
-	print ('bgd_mse:',mse)	 
-	return theta    
+	mse = np.sum((predict - target)**2)/feature.shape[0]/2
+	print ('bgd损失函数:',mse)	 
+	return theta	
 
 def sgd(feature,target,alpha = 0.001,iterateTimes = 700):#101000	 
-	'... stochastic gradient descent ...'  
+	print("迭代次数为:",iterateTimes)
 	theta = np.zeros(feature.shape[1])#num of theta = num of feature atrribute	
 	for it in range(iterateTimes):	#max iteratetimes is 200  
 		i = it%feature.shape[0]	 #quyu
@@ -41,23 +41,23 @@ def sgd(feature,target,alpha = 0.001,iterateTimes = 700):#101000
 		theta += alpha*error*feature[i]	 
 		   
 		predict = [sigmoid(np.sum(feature[i]*theta)) for sample in feature]	 
-		mse = np.sum((predict - target)**2)/feature.shape[0]	 
-	print ('sgd_mse : ',mse)  
+		mse = np.sum((predict - target)**2)/feature.shape[0]/2	 
+	print ('sgd损失函数 : ',mse)  
 		  
 	return theta
 
 
-def L2_sgd(feature,target,alpha = 0.001,Lambda = 20 ,iterateTimes = 700):#L2正则化SGD,lambda为正则项系数
-	'... stochastic gradient descent ...'  
+def L2_sgd(feature,target,alpha = 0.001,Lambda = 20 ,iterateTimes = 700):
 	theta = np.zeros(feature.shape[1])#num of theta = num of feature atrribute
+	print("正则化系数λ=",Lambda,"迭代次数为:",iterateTimes)
 	for it in range(iterateTimes):	#max iteratetimes is 200  
 		i = it%feature.shape[0]	 
 		error = target[i] - sigmoid(np.sum(feature[i]*theta))#对应元素相乘，都是行array  
 		theta = ((1.0-alpha*Lambda)*theta)+alpha*error*feature[i]	 
 		   
 		predict = [sigmoid(np.sum(feature[i]*theta)) for sample in feature]	 
-		mse = np.sum((predict - target)**2)/feature.shape[0]	 
-	print ('L2_sgd_mse : ',mse)	 
+		mse = np.sum((predict - target)**2)/feature.shape[0]/2	 
+	print ('L2_sgd损失函数 : ',mse)	 
 		  
 	return theta  
 
@@ -80,13 +80,13 @@ def L2_sgd_ColicTest():
 				linearr=[]
 				linearr.append([float(currline[i]) for i in range(21)])
 				PrecStrength.append(sigmoid(np.sum(np.array(linearr)*trainweights)))
-				#print(int(numtest-1),"   ",judge(np.array(linearr),trainweights),"   ",int(currline[21]))
+				#print(int(numtest-1),"	  ",judge(np.array(linearr),trainweights),"	  ",int(currline[21]))
 				testlabels.append(float(currline[21]))
 				if int(judge(np.array(linearr),trainweights))!=int(currline[21]):
 										errornum+=1
 		errorrate= (float(errornum)/numtest)
 		testlabels=np.array(testlabels)
-		print("error rate is %f" % errorrate)
+		print("\nerror rate is %f" % errorrate)
 		plotROC(np.array(PrecStrength),testlabels,"L2_SGD ROC")
 
 		return errorrate,PrecStrength
@@ -109,13 +109,13 @@ def sgd_ColicTest():
 				linearr=[]
 				linearr.append([float(currline[i]) for i in range(21)])
 				PrecStrength.append(sigmoid(np.sum(np.array(linearr)*trainweights)))
-				#print(int(numtest-1),"   ",judge(np.array(linearr),trainweights),"   ",int(currline[21]))
+				#print(int(numtest-1),"	  ",judge(np.array(linearr),trainweights),"	  ",int(currline[21]))
 				testlabels.append(float(currline[21]))
 				if int(judge(np.array(linearr),trainweights))!=int(currline[21]):
 										errornum+=1
 		errorrate= (float(errornum)/numtest)
 		testlabels=np.array(testlabels)
-		print("error rate is %f" % errorrate)
+		print("\nerror rate is %f" % errorrate)
 		plotROC(np.array(PrecStrength),testlabels,"SGD ROC")
 
 		return errorrate,PrecStrength
@@ -138,13 +138,13 @@ def bgd_ColicTest():
 				linearr=[]
 				linearr.append([float(currline[i]) for i in range(21)])
 				PrecStrength.append(sigmoid(np.sum(np.array(linearr)*trainweights)))
-				#print(int(numtest-1),"   ",judge(np.array(linearr),trainweights),"   ",int(currline[21]))
+				#print(int(numtest-1),"	  ",judge(np.array(linearr),trainweights),"	  ",int(currline[21]))
 				testlabels.append(float(currline[21]))
 				if int(judge(np.array(linearr),trainweights))!=int(currline[21]):
 										errornum+=1
 		errorrate= (float(errornum)/numtest)
 		testlabels=np.array(testlabels)
-		print("error rate is %f" % errorrate)
+		print("\nerror rate is %f" % errorrate)
 		plotROC(np.array(PrecStrength),testlabels,"BGD ROC")
 
 		return errorrate,PrecStrength
@@ -162,7 +162,7 @@ def plotROC(predStrengths,classLabels,title):
 	fig=plt.figure()
 	fig.clf()
 	ax=plt.subplot(111)
-	print(sortedIndex.tolist())
+	#print(sortedIndex.tolist())
 	pnum=0;
 	for index in sortedIndex.tolist() :
 		if classLabels[index] == 1.0:
